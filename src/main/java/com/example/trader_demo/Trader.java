@@ -3,36 +3,17 @@ package com.example.trader_demo;
 public class Trader {
 
     //attributes
-    int t_id;
-    String name;
-    String email;
-    double balance;
-    String createdAt;
-    String updatedAt;
+    private int t_id;
+    private String name;
+    private String email;
+    private double balance;
+    private String createdAt;
+    private String updatedAt;
 
     //constructors
 
 
     public Trader() {
-    }
-
-    //created for POST - payload accepted as JSON object
-    public Trader(String name, String email, double balance) {
-        this.name = name;
-        this.email = email;
-        this.balance = balance;
-    }
-
-    //created for PUT - payload accepted as JSON object
-    public Trader(String name, String email) {
-        this.name = name;
-        this.email = email;
-    }
-
-    //created for PUT - payload accepted as JSON object
-    public Trader(String name, double balance) {
-        this.name = name;
-        this.balance = balance;
     }
 
     public Trader(int t_id, String name, String email, double balance, String createdAt, String updatedAt) {

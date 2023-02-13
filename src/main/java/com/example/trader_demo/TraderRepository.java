@@ -1,6 +1,7 @@
 package com.example.trader_demo;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -21,9 +22,14 @@ public class TraderRepository {
 
         String sql_insTrader = "INSERT INTO traders(name, email, balance, createdAt, updatedAt) VALUES ('"
                 + trader.getName() + "', '" + trader.getEmail() + "', " + trader.getBalance() + ", CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
-
-        return jdbcT.update(sql_insTrader);
-
+       try
+       {
+           return jdbcT.update(sql_insTrader);
+       }
+       catch(Exception ex)
+       {
+           throw ex;
+       }
     }
 
     //Get all records - sorted ascending (traders/trading/all)
@@ -35,9 +41,15 @@ public class TraderRepository {
 
     //Get one record by email
     public Trader getSpecificRecord(String ent_email){
-
-        String sql_specific = "SELECT * FROM traders WHERE email = '" + ent_email + "'";
-        return jdbcT.queryForObject(sql_specific, new TraderRowMapper());
+        try
+        {
+            String sql_specific = "SELECT * FROM traders WHERE email = '" + ent_email + "'";
+            return jdbcT.queryForObject(sql_specific, new TraderRowMapper());
+        }
+        catch(IncorrectResultSizeDataAccessException e)
+        {
+            return null;
+        }
     }
 
     //update name according to email

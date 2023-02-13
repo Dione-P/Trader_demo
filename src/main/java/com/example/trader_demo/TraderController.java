@@ -3,7 +3,6 @@ package com.example.trader_demo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.*;
@@ -26,16 +25,26 @@ public class TraderController {
     @PostMapping("/register")
     public ResponseEntity<?> addTrader(@RequestBody Trader trader){
 
-        //method returns 0 for failure
-        int status = trader_ser.insertRecord(trader);
+        try {
+            int status = trader_ser.insertRecord(trader);
 
-        if(status >= 1)
-        {
-            return ResponseEntity.status(CREATED).body("");
+            if (status == 1) {
+                return ResponseEntity.status(CREATED).body("Record inserted");
+            }
+            else {
+                return ResponseEntity.status(BAD_REQUEST).body("Please check the values entered.");
+            }
         }
-        else
+        catch(Exception ex)
         {
-            return ResponseEntity.status(BAD_REQUEST).body("");
+            if(ex.toString().contains("DuplicateKeyException"))
+            {
+                return ResponseEntity.status(BAD_REQUEST).body("Email already exists in database");
+            }
+            else
+            {
+                return ResponseEntity.status(BAD_REQUEST).body("Please check the values entered.");
+            }
         }
     }
 
@@ -61,14 +70,17 @@ public class TraderController {
     {
         try
         {
-            Trader trader = trader_ser.fetchRecord(email);
-            return ResponseEntity.status(OK).body(trader);
+            if(trader_ser.fetchRecord(email) == null)
+            {
+                return ResponseEntity.status(NOT_FOUND).body("Invalid email");
+            }
+
+            return ResponseEntity.status(OK).body(trader_ser.fetchRecord(email));
         }
         catch(Exception ex)
         {
             return ResponseEntity.status(NOT_FOUND).body("");
         }
-
     }
 
     //API: PUT [trading/traders]
@@ -78,13 +90,13 @@ public class TraderController {
     {
         int status = trader_ser.updateName(trader);
 
-        if(status == 0)
+        if(status == 1)
         {
-            return ResponseEntity.status(BAD_REQUEST).body("");
+            return ResponseEntity.status(OK).body("Record updated");
         }
         else
         {
-            return ResponseEntity.status(OK).body("");
+            return ResponseEntity.status(BAD_REQUEST).body("Incorrect or missing parameters. Please check");
         }
 
     }
@@ -96,13 +108,13 @@ public class TraderController {
     {
         int status = trader_ser.updateBalance(trader);
 
-        if(status == 0)
+        if(status == 1)
         {
-            return ResponseEntity.status(BAD_REQUEST).body("");
+            return ResponseEntity.status(OK).body("Amount added to balance");
         }
         else
         {
-            return ResponseEntity.status(OK).body("");
+            return ResponseEntity.status(BAD_REQUEST).body("Incorrect or missing parameters. Please check");
         }
 
     }
