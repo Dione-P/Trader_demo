@@ -54,7 +54,7 @@ public class TraderRepository {
 
     //update name according to email
     public int updateTraderNameByEmail(String email, String upName) {
-        String sql_updtNameByEmail = "UPDATE traders SET name = '" + upName + "' WHERE email = '" + email + "'";
+        String sql_updtNameByEmail = "UPDATE traders SET name = '" + upName + ", updatedAt = CURRENT_TIMESTAMP WHERE email = '" + email + "'";
         return jdbcT.update(sql_updtNameByEmail);
     }
 
